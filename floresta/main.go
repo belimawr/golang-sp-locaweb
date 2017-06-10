@@ -1,21 +1,35 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 
-	. "github.com/jbrukh/bayesian"
-
+	"github.com/edwardmartinsjr/golang-sp-locaweb/floresta/config"
+	"github.com/edwardmartinsjr/golang-sp-locaweb/floresta/store"
 	"github.com/gocarina/gocsv"
+	. "github.com/jbrukh/bayesian"
+	_ "github.com/lib/pq"
 )
 
 func main() {
+	db, err := sql.Open("postgres", config.PostgresConnectionString())
+
+	if err != nil {
+		log.Printf("Error connecting to database: %s", err.Error())
+	}
+
+	store := store.Store{DB: db}
+
+	for _, a := range store.ReadArvores(10) {
+		fmt.Printf("%#v\n", a)
+	}
 
 	classifier()
-
 }
 
 func classifier() {
@@ -172,4 +186,5 @@ type Dictionary struct {
 	Type               string /* NLP */
 	Class              string /* -1 - NEGATIVO; 0 - NEUTRO; 1 - POSITIVO  */
 	ClassificationType string /* A - AUTOMATICA; M - MANUAL */
+
 }

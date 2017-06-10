@@ -1,22 +1,25 @@
-package main
+package models
 
 type Funcoes struct {
 	Et string `db:"et"`
 	Pt string `db:"pt"`
 	En string `db:"en"`
 }
+
 type Formas struct {
 	Et string `db:"et"`
 	Pt string `db:"pt"`
 	En string `db:"en"`
 }
+
 type Extras struct {
 	Et string `db:"et"`
 	Pt string `db:"pt"`
 	En string `db:"en"`
 }
+
 type Arvores struct {
-	Id         int    `db:"id"`
+	ID         int    `db:"id"`
 	Referencia string `db:"referencia"`
 	N          int    `db:"n"`
 	Cad        string `db:"cad"`
@@ -25,6 +28,7 @@ type Arvores struct {
 	Texto      string `db:"texto"`
 	Analise    string `db:"analise"`
 }
+
 type Ramos struct {
 	Id      int    `db:"id"`
 	Arvore  int    `db:"arvore"`
@@ -33,8 +37,9 @@ type Ramos struct {
 	Funcao  string `db:"funcao"`
 	Forma   string `db:"forma"`
 	Morfo   string `db:"morfo"`
-	Pai     `db:"pai"`
+	Pai     string `db:"pai"`
 }
+
 type RamosExtra struct {
 	Ramo  int    `db:"ramo"`
 	Extra string `db:"extra"`
