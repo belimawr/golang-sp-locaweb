@@ -32,6 +32,9 @@ func main() {
 	classifier()
 }
 
+var dictionary = []*Dictionary{}
+var searchDictionary = map [string]*Dictionary{}
+
 func classifier() {
 
 	// I - Definição das classes
@@ -56,9 +59,18 @@ func classifier() {
 
 	// VI - Classificação
 	for i, item := range tweets {
-		scores, likely, _ := classifier.LogScores(item.Term)
+		scores, likely, _ := classifier.ProbScores(item.Term)
+		//fmt.Println(item.Term)
+		
+		for _, term :=range item.Term{
+			if x, ok := searchDictionary[term]; ok {
+					fmt.Println(x.Attribute + " - "+ x.Type)
+				}
+		}
+
 		fmt.Println(i, scores, likely)
 	}
+
 
 }
 
@@ -70,9 +82,13 @@ func loadDict(file string) ([]string, []string, []string) {
 	}
 	defer dictionaryFile.Close()
 
-	dictionary := []*Dictionary{}
+	//	dictionary := []*Dictionary{}
 	if err := gocsv.UnmarshalFile(dictionaryFile, &dictionary); err != nil { // Load dictionary from file
 		panic(err)
+	}
+
+	for _, d := range dictionary{
+		searchDictionary[d.Attribute] = d
 	}
 
 	goodStuff := make([]string, len(dictionary))
@@ -188,3 +204,5 @@ type Dictionary struct {
 	ClassificationType string /* A - AUTOMATICA; M - MANUAL */
 
 }
+
+
