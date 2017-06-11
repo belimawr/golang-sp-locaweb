@@ -12,7 +12,7 @@ import (
 	"github.com/edwardmartinsjr/golang-sp-locaweb/floresta/config"
 	"github.com/edwardmartinsjr/golang-sp-locaweb/floresta/store"
 	"github.com/gocarina/gocsv"
-	. "github.com/jbrukh/bayesian"
+	"github.com/jbrukh/bayesian"
 	_ "github.com/lib/pq"
 )
 
@@ -21,6 +21,7 @@ func main() {
 
 	if err != nil {
 		log.Printf("Error connecting to database: %s", err.Error())
+		os.Exit(1)
 	}
 
 	store := store.Store{DB: db}
@@ -33,17 +34,17 @@ func main() {
 }
 
 var dictionary = []*Dictionary{}
-var searchDictionary = map [string]*Dictionary{}
+var searchDictionary = map[string]*Dictionary{}
 
 func classifier() {
 
 	// I - Definição das classes
 	const (
-		Good    Class = "Good"    /* 0 */
-		Neutral Class = "Neutral" /* 1 */
-		Bad     Class = "Bad"     /* 2 */
+		Good    bayesian.Class = "Good"    /* 0 */
+		Neutral bayesian.Class = "Neutral" /* 1 */
+		Bad     bayesian.Class = "Bad"     /* 2 */
 	)
-	classifier := NewClassifier(Good, Neutral, Bad)
+	classifier := bayesian.NewClassifier(Good, Neutral, Bad)
 
 	// II - Treinamento (dicionário polarizado)
 	goodStuff, neutralStuff, badStuff := loadDict("./oplexicon_v3.0/lexico_v3.0.txt")
@@ -61,16 +62,15 @@ func classifier() {
 	for i, item := range tweets {
 		scores, likely, _ := classifier.ProbScores(item.Term)
 		//fmt.Println(item.Term)
-		
-		for _, term :=range item.Term{
+
+		for _, term := range item.Term {
 			if x, ok := searchDictionary[term]; ok {
-					fmt.Println(x.Attribute + " - "+ x.Type)
-				}
+				fmt.Println(x.Attribute + " - " + x.Type)
+			}
 		}
 
 		fmt.Println(i, scores, likely)
 	}
-
 
 }
 
@@ -87,7 +87,7 @@ func loadDict(file string) ([]string, []string, []string) {
 		panic(err)
 	}
 
-	for _, d := range dictionary{
+	for _, d := range dictionary {
 		searchDictionary[d.Attribute] = d
 	}
 
@@ -204,5 +204,3 @@ type Dictionary struct {
 	ClassificationType string /* A - AUTOMATICA; M - MANUAL */
 
 }
-
-
